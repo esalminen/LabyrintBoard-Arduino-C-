@@ -32,11 +32,6 @@ int nServoY_OperRangeNs = 0;
 int nServoX_CorrNs = 0;             // Correction value. This is used to get servo axis straight in midposition
 int nServoY_CorrNs = 0;
 
-// Feedback to .NET application
-float fX_AxisAngleMe = 0;           // Angle measurement from GY-521 sensor
-float fY_AxisAngleMe = 0;
-float fZ_AxisAngleMe = 0;
-
 void setup() {
   lcd.begin(16, 2);
   servoX.attach(ServoXPin);
@@ -60,16 +55,13 @@ void loop() {
      ServoControl(servoX, bServoX_EnableCmd, nServoX_Ns, nServoX_OperRangeNs, nServoX_CorrNs);
      ServoControl(servoY, bServoY_EnableCmd, nServoY_Ns, nServoY_OperRangeNs, nServoY_CorrNs);
 
-     // Write data to .NET application
-
      // Write control data to LCD
      if (Timer(1000)){
          UpdateLCD(LcdScreenNo);
      }
 }
 
-void ServoControl(Servo& servo, bool enable, int servoNs, int servoOpeRangeNs, int servoCorrNs){
-  
+void ServoControl(Servo& servo, bool enable, int servoNs, int servoOpeRangeNs, int servoCorrNs){  
   
     // Calculate servo midpoint with given corretion value
     int servoMidPoint = 90 + servoCorrNs;
@@ -155,12 +147,6 @@ void HandleServoString(String cmdString, String &servoName, bool &enableCmd, int
     temp = cmdString.substring(0, indexOfSeparator);
     corrNs = temp.toInt();
     cmdString.remove(0, temp.length() + 1);
-
-//      Serial.println(servoName);
-//      Serial.println(enableCmd);
-//      Serial.println(Ns);
-//      Serial.println(operRangeNs);
-//      Serial.println(corrNs);
     }
 
 void UpdateLCD(int screenNo) {
@@ -171,9 +157,7 @@ void UpdateLCD(int screenNo) {
      lcd.print(firstRow + bServoX_EnableCmd + ' ' + nServoX_Ns + ' ' + nServoX_OperRangeNs + ' ' + nServoX_CorrNs + "      ");
      lcd.setCursor(0, 1);
      lcd.print(secondRow + bServoY_EnableCmd + ' ' + nServoY_Ns + ' ' + nServoY_OperRangeNs + ' ' + nServoY_CorrNs + "      ");
-     //lcd.print(ctrlStringLCDrow1);
      lcd.setCursor(0, 1);
-     //lcd.print(ctrlStringLCDrow2);
   }
 
 bool Timer(int intervalMs) {
